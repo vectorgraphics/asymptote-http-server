@@ -10,6 +10,7 @@ class AsymptoteOpts:
         self.base_opts = {
             'globalread': False,
             'globalwrite': False,
+            'safe': None,
             'q': None,
             'noV': None
         }
@@ -33,7 +34,7 @@ class AsymptoteOpts:
             if opt == 'f':
                 self.fmt = val
             else:
-                if val == False:
+                if val == False and not opt.startswith('no'):
                     self.base_opts['no'+opt] = None
                 else:
                     self.base_opts[opt] = val
@@ -41,6 +42,10 @@ class AsymptoteOpts:
     def delOpt(self, opt: str):
         if not self.isLocked(opt) and opt in self.base_opts:
             self.base_opts.pop(opt)
+        if opt.startswith('no'):
+            rawopt = opt[2:]
+            if rawopt in self.base_opts:
+                self.base_opts.pop(rawopt)
 
     def createArgs(self):
         base_args = ['asy']
@@ -50,6 +55,7 @@ class AsymptoteOpts:
                 base_args.append(val)
         base_args.append('-f'+self.fmt)
         base_args.append('-o'+self.tmpDir+'/out')
+        base_args.append('-')
         return base_args
 
     def getFilePath(self):
