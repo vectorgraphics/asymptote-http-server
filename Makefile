@@ -1,18 +1,20 @@
 INSTALL=/usr/bin/install -c
 
-prefix=/opt
-instdir=$(DESTDIR)${prefix}/asyrunner
+prefix=/usr/local/share
+instdir=$(DESTDIR)${prefix}/asyserver
+
+all:
 
 install:
 	$(INSTALL) -d $(instdir)
 	$(INSTALL) -p -m 755 ./*.py $(instdir)
-	$(INSTALL) -p -m 644 asyrunner.service /usr/lib/systemd/system
+	$(INSTALL) -p -m 644 asyserver.service /usr/lib/systemd/system
 	-systemctl daemon-reload
 
 uninstall:
-	-systemctl stop asyrunner.service
-	-systemctl disable asyrunner.service
+	-systemctl stop asyserver
+	-systemctl disable asyserver
 	-cd $(instdir) && rm -rf *
 	-rmdir $(instdir)
-	-rm /usr/lib/systemd/system/asyrunner.service
+	-rm /usr/lib/systemd/system/asyserver.service
 	-systemctl daemon-reload
