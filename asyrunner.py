@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-from tornado.web import (
-    Application,
-    RequestHandler
-)
+from asyopts import AsymptoteOpts
+from tornado.web import RequestHandler
 
-from tornado.ioloop import IOLoop
 import subprocess as sp
 import tempfile as tf
 import os, io
 
-
-BASE_PORT=10007
-
-
 class AsyRunHandler(RequestHandler):
     def initialize(self):
-        pass
+        self.asyopt = AsymptoteOpts()
 
-    async def prepare(self):
-        pass
+    def prepare(self):
+        for opt, val in self.request.query_arguments.items():
+            val_decoded = val[-1].decode('utf-8')
+            if opt == 'flag':
+                self.asyopt.setOpt(val_decoded)
+            else:
+                self.asyopt.setOpt(opt, val_decoded)
+        if self.asyopt.mimeType():
+            self.set_header('Content-Type', self.asyopt.mimeType() + '; charset=UTF-8')
 
     def get(self):
         outval = sp.run(['asy', '-version'], stdout=sp.PIPE, stderr=sp.PIPE)
@@ -26,18 +26,12 @@ class AsyRunHandler(RequestHandler):
 
     def post(self):
         with tf.TemporaryDirectory() as tfd:
-            outfile = '{0}/out.png'.format(tfd)
-            sp.run(['asy', '-noV', '-o'+outfile, '-fpng', '--'],
-                input=self.request.body)
-            with io.open(outfile, 'rb') as iof:
-                self.write(iof.read())
-
-
-def main():
-    main_listener = Application([(r'/upd', AsyRunHandler)])
-    main_listener.listen(BASE_PORT)
-    IOLoop.current().start()
-
-
-if __name__ == '__main__':
-    main()
+            self.asyopt.tmpDir=tfd
+            print(self.asyopt.createArgs())
+            sp.run(self.asyopt.createArgs(), input=self.request.body)
+            try:
+                with io.open(self.asyopt.getFilePath(), 'rb') as iof:
+                    self.write(iof.read())
+            except FileNotFoundError:
+                self.write_error(415)
+        self.flush()

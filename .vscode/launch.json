@@ -8,7 +8,7 @@
             "name": "Asymptote Runner",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/asyrunner.py",
+            "program": "${workspaceFolder}/runner.py",
             "console": "integratedTerminal"
         }
     ]
