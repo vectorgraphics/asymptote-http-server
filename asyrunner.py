@@ -44,6 +44,7 @@ class AsyRunHandler(RequestHandler):
             if success:
                 try:
                     with io.open(self.asyopt.getFilePath(), 'rb') as iof:
+                        self.set_status(200)
                         self.write(iof.read())
                 except FileNotFoundError:
                     self.set_status(415)
