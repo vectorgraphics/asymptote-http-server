@@ -39,7 +39,7 @@ class AsyRunHandler(RequestHandler):
             except TimeoutError:
                 success = False
                 self.set_status(408)
-                self.clear_header()
+                self.clear_header('Content-Type')
                 self.finish({'msg': 'Asymptote timeout'})
 
             if success:
@@ -49,7 +49,7 @@ class AsyRunHandler(RequestHandler):
                         self.write(iof.read())
                 except FileNotFoundError:
                     self.set_status(415)
-                    self.clear_header()
+                    self.clear_header('Content-Type')
                     self.finish({
                         'msg': 'Asymptote error',
                         'reason': proc.stderr.decode('utf-8').strip()
