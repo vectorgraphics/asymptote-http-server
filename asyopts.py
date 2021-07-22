@@ -53,9 +53,7 @@ class AsymptoteOpts:
             base_args.append('-'+opt)
             if val:
                 base_args.append(val)
-        base_args.append('-f'+self.fmt)
-        base_args.append('-o'+self.tmpDir+'/out')
-        base_args.append('-')
+        base_args.extend(['-f',self.fmt,'-o',self.tmpDir+'/out','-'])
         return base_args
 
     def getFilePath(self):

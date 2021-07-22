@@ -3,6 +3,8 @@ from tornado.web import Application
 from tornado.ioloop import IOLoop
 from asyserver import AsyRunHandler
 from argparse import ArgumentParser
+from pwd import getpwnam
+from os import setgid,setuid
 
 BASE_PORT=10007
 TIMEOUT=60
@@ -20,6 +22,12 @@ def main():
     args = parse_args()
     main_listener = Application([(r'/', AsyRunHandler, {'timeout': args.timeout})])
     main_listener.listen(args.port)
+    # Drop any root permissions
+    pwnam=getpwnam('asymptote')
+    gid=pwnam.pw_gid
+    uid=pwnam.pw_uid
+    setgid(gid);
+    setuid(uid);
     IOLoop.current().start()
 
 

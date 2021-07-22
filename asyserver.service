@@ -1,15 +1,15 @@
 [Unit]
-Description=Asymptote HTTP REST Runner
+Description=Asymptote HTTP REST Server
 After=network.target
-StartLimitBurst=3
-StartLimitIntervalSec=10
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User=asymptote
-Restart=always
+ExecStart=python3 /usr/local/share/asyserver/server.py --port 443 --timeout 120
+User=root
+WorkingDirectory=/usr/local/share/asyserver
 RestartSec=1
-ExecStart=python3 /usr/local/share/asyserver/server.py --port 10007 --timeout 120
+Restart=on-failure
 
 
 [Install]

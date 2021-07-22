@@ -8,7 +8,7 @@ all:
 install:
 	$(INSTALL) -d $(instdir)
 	$(INSTALL) -p -m 755 ./*.py $(instdir)
-	$(INSTALL) -p -m 644 asyserver.service /usr/lib/systemd/system
+	$(INSTALL) -p -m 644 asyserver.service /lib/systemd/system
 	-systemctl daemon-reload
 
 uninstall:
@@ -16,5 +16,5 @@ uninstall:
 	-systemctl disable asyserver
 	-cd $(instdir) && rm -rf *
 	-rmdir $(instdir)
-	-rm /usr/lib/systemd/system/asyserver.service
+	-rm /lib/systemd/system/asyserver.service
 	-systemctl daemon-reload
