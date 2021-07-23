@@ -24,7 +24,5 @@ def drop_root_perm(username='supakorn', group='supakorn', umask=0o077):
     os.setgid(newGid)
     os.setuid(newUid)
 
-    print_stderr('uid={0}', os.getuid())
-
     os.environ['HOME']=os.path.expanduser('~'+username)
     return os.umask(umask)
