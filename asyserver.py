@@ -4,7 +4,7 @@ from tornado.web import RequestHandler
 
 import subprocess as sp
 import tempfile as tf
-import os, io
+import io
 
 class AsyRunHandler(RequestHandler):
     def initialize(self, timeout):
@@ -60,3 +60,4 @@ class AsyRunHandler(RequestHandler):
                     self.set_status(204)
                     self.clear_header('Content-Type')
         self.flush()
+        return
