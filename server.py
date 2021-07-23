@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from tornado.web import Application
+from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from asyserver import AsyRunHandler
 from argparse import ArgumentParser
-from pwd import getpwnam
-from os import setgid,setuid
-
+from utils import print_stderr, drop_root_perm
 BASE_PORT=10007
 TIMEOUT=60
+
 
 def parse_args():
     parser = ArgumentParser()
@@ -20,14 +20,20 @@ def parse_args():
 
 def main():
     args = parse_args()
-    main_listener = Application([(r'/', AsyRunHandler, {'timeout': args.timeout})])
-    main_listener.listen(args.port)
+    main_application = Application([
+        (r'/', AsyRunHandler, {'timeout': args.timeout})
+        ])
+    main_server = HTTPServer(main_application)
     # Drop any root permissions
-    pwnam=getpwnam('asymptote')
-    gid=pwnam.pw_gid
-    uid=pwnam.pw_uid
-    setgid(gid);
-    setuid(uid);
+    main_server.bind(args.port)
+
+    try:
+        drop_root_perm()
+        print_stderr('User access level dropped')
+    except RuntimeError as e:
+        print_stderr('DropPerm Msg: {0}', e)
+
+    main_server.start()
     IOLoop.current().start()
 
 
