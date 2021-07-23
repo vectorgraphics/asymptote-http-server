@@ -6,7 +6,7 @@ ASY_LOCKED_OPTS = {
     }
 
 class AsymptoteOpts:
-    def __init__(self, fmt='png'):
+    def __init__(self, fmt='html'):
         self.base_opts = {
             'globalread': False,
             'globalwrite': False,
@@ -38,14 +38,6 @@ class AsymptoteOpts:
                     self.base_opts['no'+opt] = None
                 else:
                     self.base_opts[opt] = val
-
-    def delOpt(self, opt: str):
-        if not self.isLocked(opt) and opt in self.base_opts:
-            self.base_opts.pop(opt)
-        if opt.startswith('no'):
-            rawopt = opt[2:]
-            if rawopt in self.base_opts:
-                self.base_opts.pop(rawopt)
 
     def createArgs(self):
         base_args = ['asy']

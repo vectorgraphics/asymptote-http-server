@@ -5,6 +5,8 @@ from tornado.ioloop import IOLoop
 from asyserver import AsyRunHandler
 from argparse import ArgumentParser
 from utils import print_stderr, drop_root_perm
+import os
+
 BASE_PORT=10007
 TIMEOUT=60
 
@@ -29,8 +31,17 @@ def main():
     main_server.bind(args.port)
 
     try:
-        drop_root_perm()
-        print_stderr('User access level dropped')
+        if 'ASYMPTOTE_USER' in os.environ:
+            username=os.environ['ASYMPTOTE_USER']
+        else:
+            username='asymptote'
+
+        if 'ASYMPTOTE_GROUP' in os.environ:
+            group=os.environ['ASYMPTOTE_GROUP']
+        else:
+            group='asymptote'
+
+        drop_root_perm(username,group)
     except RuntimeError as e:
         print_stderr('DropPerm Msg: {0}', e)
 

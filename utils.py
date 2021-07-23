@@ -8,11 +8,11 @@ def print_stderr(msg: str, *args):
     sys.stderr.flush()
 
 
-def drop_root_perm(username='supakorn', group='supakorn', umask=0o077):
+def drop_root_perm(username, group, umask=0o077):
     if sys.platform.startswith('win32'):
         raise RuntimeError('Cannot run on Windows platforms')
     if getpass.getuser() != 'root':
-        raise RuntimeError('Must be run as root')
+        return
 
     try:
         newUid = pwd.getpwnam(username).pw_uid
@@ -25,4 +25,5 @@ def drop_root_perm(username='supakorn', group='supakorn', umask=0o077):
     os.setuid(newUid)
 
     os.environ['HOME']=os.path.expanduser('~'+username)
+    print_stderr('Root permissions dropped')
     return os.umask(umask)

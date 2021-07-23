@@ -5,6 +5,8 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
+Environment="ASYMPTOTE_USER=asymptote"
+Environment="ASYMPTOTE_GROUP=asymptote"
 ExecStart=python3 /usr/local/share/asyserver/server.py --port 443 --timeout 120
 User=root
 WorkingDirectory=/usr/local/share/asyserver

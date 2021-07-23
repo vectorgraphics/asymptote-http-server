@@ -24,7 +24,7 @@ class AsyRunHandler(RequestHandler):
 
     def get(self):
         outval = sp.run(['asy', '-version'], stdout=sp.PIPE, stderr=sp.PIPE)
-        self.write(outval.stderr.decode('utf-8'))
+        self.write(outval.stderr.decode('utf-8').replace('\n','<br>'))
 
     def post(self):
         with tf.TemporaryDirectory() as tfd:
