@@ -35,7 +35,8 @@ class AsyRunHandler(RequestHandler):
             try:
                 proc = sp.run(
                     self.asyopt.createArgs(), input=self.request.body,
-                    timeout=self.timeout, stderr=sp.PIPE)
+                    timeout=self.timeout, stderr=sp.PIPE, stdout=sp.PIPE,
+                    cwd=self.asyopt.tmpDir)
             except TimeoutError:
                 success = False
                 self.set_status(408)
