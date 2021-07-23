@@ -31,7 +31,7 @@ class AsymptoteOpts:
 
     def setOpt(self, opt, val=None):
         if not self.isLocked(opt):
-            if opt == 'f':
+            if opt == 'f' or opt == 'outformat':
                 self.fmt = val
             else:
                 if val == False and not opt.startswith('no'):
