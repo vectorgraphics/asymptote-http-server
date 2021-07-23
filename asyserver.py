@@ -45,14 +45,18 @@ class AsyRunHandler(RequestHandler):
 
             if success:
                 try:
+                    proc.check_returncode()
                     with io.open(self.asyopt.getFilePath(), 'rb') as iof:
                         self.set_status(200)
                         self.write(iof.read())
-                except FileNotFoundError:
+                except sp.CalledProcessError:
                     self.set_status(415)
                     self.clear_header('Content-Type')
                     self.finish({
-                        'msg': 'Asymptote error',
+                        'msg': 'Asymptote error.',
                         'reason': proc.stderr.decode('utf-8').strip()
                         })
+                except FileNotFoundError:
+                    self.set_status(204)
+                    self.clear_header('Content-Type')
         self.flush()
