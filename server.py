@@ -8,7 +8,7 @@ from utils import print_stderr, drop_root_perm
 import os
 
 BASE_PORT=10007
-TIMEOUT=60
+TIMEOUT=300
 
 
 def parse_args():
