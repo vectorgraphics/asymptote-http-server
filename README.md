@@ -9,20 +9,34 @@ compiled output. It is written in [Python 3](https://www.python.org/) with
 
 ## Public endpoint
 
-The service is fronted by an `nginx` reverse proxy that terminates TLS (see
-`asymptote.ualberta.ca.conf` in this repository):
+The service is fronted by an `nginx` reverse proxy that terminates TLS and
+forwards to `127.0.0.1:10007`:
 
 - **HTTPS (preferred):** `https://asymptote.ualberta.ca/cli`
 - Plain HTTP on port `10007` (`http://asymptote.ualberta.ca:10007`) is also
   available for now, but the direct port is expected to be discontinued in the
   future. Use the HTTPS endpoint.
 
+The relevant `nginx` location is an exact match on `/cli`:
+
+```nginx
+location = /cli {
+  proxy_pass http://127.0.0.1:10007/;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  client_max_body_size 20m;
+  proxy_read_timeout 300s;
+  proxy_send_timeout 300s;
+}
+```
+
 ## Usage
 
 Send your `.asy` source as the **POST** body. Choose the output format with the
 `f` (or `outformat`) query argument; other `asy` command-line options are passed
-as additional query arguments. A standalone flag is passed with the `flag`
-argument (e.g. `?flag=q` for quiet).
+as additional query arguments.
 
 ```bash
 # SVG output
@@ -55,13 +69,10 @@ health check).
 | Query argument      | Meaning                                                                     |
 |---------------------|-----------------------------------------------------------------------------|
 | `f` / `outformat`   | Output format (`svg`, `pdf`, `html`, `v3d`, `eps`, ...). Default `html`.    |
-| `flag`              | A standalone `asy` flag (e.g. `?flag=q`).                                    |
 | any other `asy` opt | Passed through as an `asy` command-line option (e.g. `render=4`).           |
 
-A fixed, safety-oriented set of `asy` options is forced by the server, and a few
-options are **locked** so a client cannot override them: `safe`, `globalread`,
-`globalwrite`, `o`, and `outname`. Each request runs `asy` in a fresh temporary
-directory, which is removed when the request completes.
+Each request runs `asy` in a fresh temporary directory, which is removed when
+the request completes.
 
 ## Responses
 
@@ -94,7 +105,6 @@ sudo systemctl enable --now asyserver
 ```
 
 The service runs `server.py --port 10007 --timeout 300` as the `asymptote`
-user. In production the public HTTPS endpoint (`/cli`) is provided by the
-`nginx` vhost in `asymptote.ualberta.ca.conf`, which terminates TLS and forwards
-requests to `127.0.0.1:10007`.
+user. In production the public HTTPS endpoint (`/cli`) is served by the `nginx`
+location shown above, which forwards requests to `127.0.0.1:10007`.
 
