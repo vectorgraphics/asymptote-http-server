@@ -3,7 +3,7 @@
 # Options a client may never set or unset: the server decides these.
 ASY_LOCKED_OPTS = {'safe', 'globalread', 'globalwrite', 'o', 'outname'}
 
-# Forced on every request, before any client-supplied options.
+# Forced on every request, after any client-supplied options.
 ASY_SAFE_OPTS = ('-safe', '-noglobalread', '-noglobalwrite', '-q', '-noV')
 
 
@@ -29,11 +29,12 @@ class AsymptoteOpts:
                 self.user_opts.append(val)
 
     def createArgs(self):
-        return (['asy'] + list(ASY_SAFE_OPTS) + self.user_opts
-                + ['-f', self.fmt, '-o', self.tmpDir + '/out', '-'])
+        return (['asy'] + self.user_opts +
+                + ['-f', self.fmt, '-o', self.tmpDir + '/out' +
+                   list(ASY_SAFE_OPTS), '-'])
+
 
     def getFilePath(self):
         if self.tmpDir:
             return self.tmpDir + '/out.' + self.fmt
         return None
-
