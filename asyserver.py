@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 from tornado.web import RequestHandler
 
@@ -8,7 +7,8 @@ import io
 
 # Appended after any client-supplied options, so a client can never
 # override them: asy honors the last occurrence of each option.
-SAFE_OPTS = ('-safe', '-noglobalread', '-noglobalwrite', '-q', '-noV')
+SAFE_OPTS = ('-safe', '-noglobalread', '-noglobalwrite',
+             '-nocurlAfterRead', '-q', '-noV')
 
 
 class AsyRunHandler(RequestHandler):
@@ -60,4 +60,3 @@ class AsyRunHandler(RequestHandler):
                         })
                 except FileNotFoundError:
                     self.set_status(204)
-
