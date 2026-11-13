@@ -30,8 +30,8 @@ class AsymptoteOpts:
 
     def createArgs(self):
         return (['asy'] + self.user_opts +
-                + ['-f', self.fmt, '-o', self.tmpDir + '/out' +
-                   list(ASY_SAFE_OPTS), '-'])
+                ['-f', self.fmt, '-o', self.tmpDir + '/out'] +
+                list(ASY_SAFE_OPTS) + ['-'])
 
 
     def getFilePath(self):
